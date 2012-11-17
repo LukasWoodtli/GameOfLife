@@ -5,12 +5,12 @@
 #include <QTime>
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow),
-  m_pGraphicsScene(new QGraphicsScene(this)),
-  xDim(50),
-  yDim(30),
-  fieldSize(15)
+  QMainWindow(parent),
+  mc_iXDim(70),
+  mc_iYDim(40),
+  mc_iFieldSize(15),
+  ui(new Ui::MainWindow),
+  m_pGraphicsScene(new QGraphicsScene(this))
 {
     ui->setupUi(this);
     ui->m_pGraphicsView->setScene(m_pGraphicsScene);
@@ -19,37 +19,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     qsrand(QTime::currentTime().msec());
 
-    for (int j=0; j<xDim; ++j) {
-      QList<bool> col;
-      for (int i=0; i<yDim; ++i) {
-        col << false;
-      }
-      m_lstLife << col;
-    }
+    initField();
 
-    const int numLife = 250;
-    Q_ASSERT(numLife < xDim * yDim);
-
-    int xRand, yRand;
-    int count = 0;
-    while (true) {
-      xRand = qrand() % xDim;
-      yRand = qrand() % yDim;
-
-      if (m_lstLife[xRand][yRand] != true) {
-        m_lstLife[xRand][yRand] = true;
-        count++;
-      }
-      else
-      {
-        continue;
-      }
-      if (count >= numLife)
-      {
-        break;
-      }
-    }
-
+    setRandomField();
 
     drawField();
 
@@ -70,9 +42,9 @@ void MainWindow::recalculateFields() {
   QList<QList<bool> > newFields;
 
 
-  for (int j=0; j<xDim; ++j) {
+  for (int j=0; j<mc_iXDim; ++j) {
     QList<bool> col;
-    for (int i=0; i<yDim; ++i) {
+    for (int i=0; i<mc_iYDim; ++i) {
       col << false;
     }
     newFields << col;
@@ -80,8 +52,8 @@ void MainWindow::recalculateFields() {
 
 
   int nNeighbours;
-  for (int j=0; j<xDim; ++j) {
-    for (int i=0; i<yDim; ++i) {
+  for (int j=0; j<mc_iXDim; ++j) {
+    for (int i=0; i<mc_iYDim; ++i) {
       nNeighbours = numNeighbours(j, i);
 
       if (!m_lstLife[j][i] && 3 == nNeighbours) {
@@ -111,7 +83,7 @@ quint8 MainWindow::numNeighbours(quint8 k, quint8 l) {
   quint8 nNeighbours = 0;
 
   for (int j=-1; j<=1; ++j) {
-    if (0 > j + k || xDim <= j + k) {
+    if (0 > j + k || mc_iXDim <= j + k) {
       continue;
     }
     for (int i=-1; i<=1; ++i) {
@@ -119,7 +91,7 @@ quint8 MainWindow::numNeighbours(quint8 k, quint8 l) {
         continue;
       }
 
-      if (0 > i + l || yDim <= i + l) {
+      if (0 > i + l || mc_iYDim <= i + l) {
         continue;
       }
 
@@ -139,28 +111,59 @@ void MainWindow::drawField() {
   m_pGraphicsScene->clear();
 
   // Vertical lines
-  for (int i=0; i<=xDim; ++i) {
-    m_pGraphicsScene->addLine(10 + i * fieldSize ,10, 10 + i * fieldSize, yDim * fieldSize +10);
+  for (int i=0; i<=mc_iXDim; ++i) {
+    m_pGraphicsScene->addLine(10 + i * mc_iFieldSize ,10, 10 + i * mc_iFieldSize, mc_iYDim * mc_iFieldSize +10);
   }
 
   // Horizontal lines
-  for (int j=0; j<=yDim; ++j) {
-    m_pGraphicsScene->addLine(10, 10 + j * fieldSize ,xDim * fieldSize + 10 ,10 + j * fieldSize);
+  for (int j=0; j<=mc_iYDim; ++j) {
+    m_pGraphicsScene->addLine(10, 10 + j * mc_iFieldSize ,mc_iXDim * mc_iFieldSize + 10 ,10 + j * mc_iFieldSize);
   }
 
 
-  for (int j=0; j<xDim; ++j) {
-    for (int i=0; i<yDim; ++i) {
+  for (int j=0; j<mc_iXDim; ++j) {
+    for (int i=0; i<mc_iYDim; ++i) {
       if (m_lstLife[j][i]) {
-        m_pGraphicsScene->addRect(10 + fieldSize * j, 10 + fieldSize * i, fieldSize, fieldSize, QPen(), QBrush(Qt::black));
+        m_pGraphicsScene->addRect(10 + mc_iFieldSize * j, 10 + mc_iFieldSize * i, mc_iFieldSize, mc_iFieldSize, QPen(), QBrush(Qt::black));
       }
     }
   }
 
-
-
-
   m_pGraphicsScene->update();
+}
 
 
+void MainWindow::initField() {
+  for (int j=0; j<mc_iXDim; ++j) {
+    QList<bool> col;
+    for (int i=0; i<mc_iYDim; ++i) {
+      col << false;
+    }
+    m_lstLife << col;
+  }
+}
+
+void MainWindow::setRandomField() {
+    static const int numLife = 650;
+    Q_ASSERT(numLife < mc_iXDim * mc_iYDim);
+
+    int xRand, yRand;
+    int count = 0;
+    while (true) {
+      xRand = qrand() % mc_iXDim;
+      yRand = qrand() % mc_iYDim;
+
+      if (m_lstLife[xRand][yRand] != true) {
+        m_lstLife[xRand][yRand] = true;
+        count++;
+      }
+      else
+      {
+        continue;
+      }
+      if (count >= numLife)
+      {
+        break;
+      }
+    }
 }

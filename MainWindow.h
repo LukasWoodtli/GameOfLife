@@ -6,15 +6,15 @@
 class QGraphicsScene;
 
 namespace Ui {
-    class MainWindow;
+  class MainWindow;
 }
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+  explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
 
 
@@ -28,17 +28,19 @@ private:
 
   void drawField();
 
-  const quint8 xDim;
+  void initField();
 
-  const quint8 yDim;
-    const quint8 fieldSize;
+  void setRandomField();
 
-    QList<QList<bool> > m_lstLife;
+  const quint8 mc_iXDim;
+  const quint8 mc_iYDim;
 
+  const quint8 mc_iFieldSize;
 
-    Ui::MainWindow *ui;
+  QList<QList<bool> > m_lstLife;
 
-    QGraphicsScene *m_pGraphicsScene;
+  Ui::MainWindow *ui;
+  QGraphicsScene *m_pGraphicsScene;
 };
 
 #endif // MAINWINDOW_H
