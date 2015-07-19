@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     drawField();
 
-    startTimer(100);
+    startTimer(150);
 }
 
 MainWindow::~MainWindow()
